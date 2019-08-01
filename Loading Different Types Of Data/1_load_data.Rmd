@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+1) Loading The Data
+```{r}
+setwd("~/Documents/2.2 Code_n_data.zip/Code_n_data/section2/1_R_Practice")
+
+rep1=read.csv("Resp1.csv",header = T)
+head(rep1)
+```
+```{r}
+str(rep1)
+```
+
+
+```{r}
+wine1=read.csv("winequality-red.csv",header = T,sep = ";")
+head(wine1)
+```
+```{r}
+install.packages("readxl")
+library('readxl')
+```
+```{r}
+exl=read_xls("boston1.xls")
+head(exl)
+summary(exl)
+```
+Reading the .ZIP files from online
+```{r}
+temp = tempfile()
+
+download.file("http://www.bls.gov/cex/pumd/data/comma/diary14.zip",temp)
+
+zip_data2 =read.csv(unz(temp, "diary14/expd142.csv"))
+
+unlink(temp)
+
+zip_data2[1:5, 1:10]
+```
+Extracting Data From SQlite Data Bases
+```{r}
+install.packages("RSQLite")
+install.packages("DBI")
+
+library(RSQLite)
+library(DBI)
+```
+```{r}
+db=RSQLite::datasetsDb()
+dbListTables(db) # to list the tables
+```
+```{r}
+dbReadTable(db,"CO2")
+```
+```{r}
+dbGetQuery(db,"SELECT *FROM CO2 WHERE conc < 100")
+```
+```{r}
+dbDisconnect(db)
+```
+```{r}
+setwd('~//Documents//2.2 Code_n_data.zip//Code_n_data//section2//1_R_Practice//database.sqlite')
+db=dbConnect(dbDriver("SQLite"),"database.sqlite")
+```
+```{r}
+alltables=dbListTables(db)
+```
+
+```{r}
+head(alltables)
+```
+```{r}
+reviews=dbGetQuery(db,"SELECT *FROM Reviews LIMIT 100")
+```
+```{r}
+head(reviews)
+```
+```{r}
+dbDisconnect(db)
+```
+```{r}
+setwd('~//Documents//2.2 Code_n_data.zip//Code_n_data//section2//1_R_Practice/ipl//database.sqlite')
+db=dbConnect(dbDriver("SQLite"),"database.sqlite")
+```
+```{r}
+dbListTables(db)
+```
+```{r}
+dbReadTable(db,"Country")
+```
+```{r}
+head(dbReadTable(db,"City"))
+```
+```{r}
+df=dbReadTable(db,"Batsman_Scored")
+head(df)
+summary(df)
+str(df)
+```
+```{r}
+dbDisconnect(db)
+```
+Reading Java Script Object Notation Files (JSON)
+```{r}
+install.packages("rjson")
+library(rjson)
+```
+```{r}
+json_file="http://api.worldbank.org/country?per_page=10&region=OED&lendingtype=LNX&format=json"
+json_data=fromJSON(file = json_file)
+```
+```{r}
+json_data[[1]]
+```
+```{r}
+head(json_data[[2]])
+```
+```{r}
+d3=lapply(json_data[[2]], function(x) c(x["id"], x["iso2Code"]))
+```
+```{r}
+d3=do.call(rbind,d3)
+```
+```{r}
+d3
+```
+```{r}
+d4 <- lapply(json_data[[2]], function(x) c(x["id"], x["iso2Code"], x$region["id"], x$region["value"], x["capitalCity"]))
+d4=do.call(rbind,d4)
+d4
+```
+
